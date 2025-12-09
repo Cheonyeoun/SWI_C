@@ -1,0 +1,48 @@
+name: Deploy Environments
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env.staging
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.API_URL_STAGING }}" >> .env.staging
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_STAGING }}" >> .env.staging
+
+      - name: Install
+        run: npm install
+
+      - name: Build Staging
+        run: npm run build:staging
+
+
+  build-production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Create .env.production
+        run: |
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.API_URL_PRODUCTION }}" >> .env.production
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD_PRODUCTION }}" >> .env.production
+
+      - name: Install
+        run: npm install
+
+      - name: Build Production
+        run: npm run build:production
